@@ -1,0 +1,13 @@
+{
+	"type": "Collection",
+	"properties": {
+		"WhosTurnIsItAnyway": {
+			"name": "WhosTurnIsItAnyway",
+			"type": "number",
+			"typeLabel": "number",
+			"required": false,
+			"id": "WhosTurnIsItAnyway",
+			"order": 0
+		}
+	}
+}

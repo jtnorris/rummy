@@ -1,0 +1,21 @@
+{
+	"type": "Collection",
+	"properties": {
+		"gameId": {
+			"name": "gameId",
+			"type": "number",
+			"typeLabel": "number",
+			"required": false,
+			"id": "gameId",
+			"order": 0
+		},
+		"playerId": {
+			"name": "playerId",
+			"type": "number",
+			"typeLabel": "number",
+			"required": false,
+			"id": "playerId",
+			"order": 1
+		}
+	}
+}
