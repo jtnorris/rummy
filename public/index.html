@@ -1,196 +1,84 @@
+<!DOCTYPE HTML>
 <html lang="en-US">
 <head>
 	<meta charset="UTF-8">
-	<title>GreatRummy</title>
-	<link rel="stylesheet" href="rummy.css">
+	<title></title>
 </head>
 <body>
-	<section class="deck">
-		<article class="card"></article>
-	</section>
-</body>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-<script src="http://twitter.github.com/hogan.js/builds/2.0.0/hogan-2.0.0.js"></script>
-<script type="text/javascript" src="templates.js"></script>
-<script type="text/javascript" src="hoverIntent.js"></script>
+
+<div id="page"></div>
+
+<form data-type="logout">
+	<button>Logout</button>
+</form>
+
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script type="text/javascript" src="/dpd.js"></script>
+
 <script>
-	(function($) {
+	
+	// autologin if player session exists
+	dpd.players.me(function(result, errors) {
+		if (result !== '') {
+			handleSubmission('login', 'me', result, errors);
+		} else {
+			handleSubmission('home', 'login', result, errors);
+		}
+	});
 
-		var r = {};
+	function handleSubmission(type, page, result, error) {
+		 if(error) return console.log(error);
+		 $('#page').load(page + '.html', function () {
+		 	$(document).trigger('/players/' + type + 'ed');
+		 });
+	}
 
-		r.cards = [],
-		r.cardScores = {
-			"A": {
-				"score": 11,
-				"name": "Ace"
-			},
-			"K": {
-				"score": 10,
-				"name": "King"
-			},
-			"Q": {
-				"score": 10,
-				"name": "Queen"
-			},
-			"J": {
-				"score": 10,
-				"name": "Jack"
-			},
-			"10": {
-				"score": 10,
-				"name": "Ten"
-			},
-			"9": {
-				"score": 9,
-				"name": "Nine"
-			},
-			"8": {
-				"score": 8,
-				"name": "Eight"
-			},
-			"7": {
-				"score": 7,
-				"name": "Seven"
-			},
-			"6": {
-				"score": 6,
-				"name": "Six"
-			},
-			"5": {
-				"score": 5,
-				"name": "Five"
-			},
-			"4": {
-				"score": 4,
-				"name": "Four"
-			},
-			"3": {
-				"score": 3,
-				"name": "Three"
-			},
-			"2": {
-				"score": 2,
-				"name": "Two"
-			}
-		},
-		r.suits = [
-			{
-				"name": "hearts",
-				"symbol": "&hearts;"
-			},
-			{
-				"name": "diamonds",
-				"symbol": "&diams;"
-			},
-			{
-				"name": "clubs",
-				"symbol": "&clubs;"
-			},
-			{
-				"name": "spades",
-				"symbol": "&spades;"
-			}
-		],
-		r.players = {
-			"matt.hollis@bt.com": {
-				"name": "Matt",
-				"cards": []
-			},
-			"john.t.norris@bt.com": {
-				"name": "John",
-				"cards": []
-			}
-		},
-		r.opts = {
-			"startingCards": 7
-		},
-		playerTemplate = Hogan.compile(templates.player);
+	$('body').on('submit', 'form', function (e) {
+		e.preventDefault();
 
-		r.generateCards = function () {
-			for (var i = 0; i < r.suits.length; i++) {
-				for (var card in r.cardScores) {
-					r.cards.push({
-						"suit": r.suits[i].name,
-						"symbol": r.suits[i].symbol,
-						"symbols": function () {
-							return function () {
-								var symbols = '',
-									to = this.score,
-									j = 0;
-								if (this.score >= 10 && this.name !== 'Ten') {
-									to = 1;
-								}
-								for (j; j < to; j++) {
-									symbols += '<li>' + this.symbol + '</li>';
-								}
-								return symbols;
-							}
-						},
-						"card": card,
-						"score": r.cardScores[card].score,
-						"name": r.cardScores[card].name
-					});
-				}
-			}
+		var $form = $(this),
+			type = $form.data('type'),
+			data = ($form.serialize() !== '' ? JSON.parse('{"' + $form.serialize().split('=').join('": "').split('&').join('", "') + '"}') : '');
+
+		switch (type) {
+
+			case 'register':
+				dpd.players.post(data, function(result, error) {
+					handleSubmission(type, 'login', result, error);
+				});
+			break;
+
+			case 'login':
+				dpd.players.login(data, function(result, error) {
+					handleSubmission(type, 'me', result, error);
+				});
+			break;
+
+			case 'logout':
+				dpd.players.logout(function(result, error) {
+					handleSubmission(type, 'login', result, error);
+				});
+			break;
+
 		}
 
-		r.shuffleCards = function() {
-			var i = r.cards.length,
-				j,
-				temp;
+	});
 
-		    if ( i == 0 ) return;
-		    while ( --i ) {
-		        j = Math.floor( Math.random() * ( i + 1 ) );
-		        temp = r.cards[i];
-		        r.cards[i] = r.cards[j];
-		        r.cards[j] = temp;
-		    }
-		}
+	$(document).bind('/players/registered', function () {
+		$('#page').find('form[data-type="login"]').prepend('Now login sucker!');
+	});
 
-		r.dealCards = function () {
-			for (var i = 0; i < r.opts.startingCards; i++) {
-				for (var player in r.players) {
-					r.takeTopCard(r.players[player]);
-				}
-			}
-		}
+	$(document).bind('/players/logined', function () {
+		dpd.players.me(function(result, errors) {
+			$('#page').append(result.username);
+		});
+	});
 
-		r.takeTopCard = function (player) {
-			player.cards.push(r.cards.splice(0,1)[0]);
-		}
-
-		r.displayDeal = function () {
-			for (var player in r.players) {
-				$('body').append(playerTemplate.render(r.players[player], partials));
-			}
-		}
-
-		r.generateCards();
-		r.shuffleCards();
-		r.dealCards();
-		r.displayDeal();
-
-	}(jQuery));
-
-$(".player .card").hoverIntent({
-	over: function () {
-		$(this).animate({
-			'margin-right': -30
-		}, 300)
-	},
-    out: function () {
-    	$(this).animate({
-			'margin-right': -170
-		}, 300)
-    },
-    interval: 300
-});
-
-$(".player .card").on('click', function () {
-	$(this).toggleClass('selected');
-});
-
+	$(document).bind('/players/logouted', function () {
+		$('#page').append('Logged out!');
+	});
 
 </script>
+
+</body>
 </html>
