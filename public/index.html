@@ -192,6 +192,7 @@
           //
           function getMessages() {
             getGame();
+            //
             // Get messages from the `/messages` collection using jQuery.
             //
             dpd.messages.get(function (messages) {
@@ -204,6 +205,8 @@
                 for(var i = 0; i < messages.length; i++) {
                   if (messages[i].gameId === currentGame.id) {
                     $('#messages').append('<tr><td><div class="person">' + messages[i].creator + '</div>' + messages[i].text + '</td></tr>');
+                  } else {
+                    console.log("Game does not match");
                   }
                 }
               });

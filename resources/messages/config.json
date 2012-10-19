@@ -16,6 +16,14 @@
 			"required": false,
 			"id": "card",
 			"order": 1
+		},
+		"gameId": {
+			"name": "gameId",
+			"type": "string",
+			"typeLabel": "string",
+			"required": false,
+			"id": "gameId",
+			"order": 2
 		}
 	}
 }
