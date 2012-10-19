@@ -1,0 +1,21 @@
+{
+	"type": "UserCollection",
+	"properties": {
+		"visited": {
+			"required": false,
+			"type": "date",
+			"typeLabel": "date",
+			"id": "visited",
+			"name": "visited",
+			"order": 0
+		},
+		"name": {
+			"required": false,
+			"type": "string",
+			"typeLabel": "string",
+			"id": "name",
+			"name": "name",
+			"order": 1
+		}
+	}
+}
