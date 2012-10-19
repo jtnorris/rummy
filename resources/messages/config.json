@@ -5,7 +5,17 @@
 			"required": false,
 			"type": "string",
 			"typeLabel": "string",
-			"id": "text"
+			"id": "text",
+			"name": "text",
+			"order": 0
+		},
+		"card": {
+			"name": "card",
+			"type": "object",
+			"typeLabel": "object",
+			"required": false,
+			"id": "card",
+			"order": 1
 		}
 	}
 }

@@ -1,0 +1,13 @@
+{
+	"type": "Collection",
+	"properties": {
+		"deck": {
+			"name": "deck",
+			"type": "array",
+			"typeLabel": "array",
+			"required": false,
+			"id": "deck",
+			"order": 0
+		}
+	}
+}
