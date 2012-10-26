@@ -1,1 +1,0 @@
-emit('messages changed', this);

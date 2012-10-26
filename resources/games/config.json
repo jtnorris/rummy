@@ -8,6 +8,14 @@
 			"required": false,
 			"id": "deck",
 			"order": 0
+		},
+		"nextToGo": {
+			"name": "nextToGo",
+			"type": "string",
+			"typeLabel": "string",
+			"required": true,
+			"id": "nextToGo",
+			"order": 1
 		}
 	}
 }

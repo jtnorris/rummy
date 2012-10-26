@@ -49,9 +49,9 @@
           </div>
           <h1>...</h1>
           <!--
-            A simple table to display messages.
+            A simple table to display cards.
           -->
-          <table id="messages" class="table table-bordered table-striped"></table>
+          <table id="cards" class="table table-bordered table-striped"></table>
 
           <form class="form-horizontal">
             <div class="input-append">
@@ -128,14 +128,16 @@
 
 
           //
-          // Show new messages as they are created.
+          // Show new cards as they are created.
           //
           var user,
             currentGame,
-            gameDeck;
+            gameDeck,
+            players,
+            nextToGo;
 
-          dpd.on('messages changed', function () {
-            getMessages();
+          dpd.on('cards changed', function () {
+            getCards();
           });
 
           //
@@ -182,29 +184,29 @@
             $('h1').text('Hello, ' + me.name);
             user = me;
             //
-            // Only get messages if the user is logged in.
+            // Only get cards if the user is logged in.
             //
-            getMessages();
+            getCards();
           });
 
           //
           // Here is a simple example of reading and saving data with a deployd collection.
           //
-          function getMessages() {
+          function getCards() {
             getGame();
             //
-            // Get messages from the `/messages` collection using jQuery.
+            // Get cards from the `/cards` collection using jQuery.
             //
-            dpd.messages.get(function (messages) {
-              $('#messages').empty();
-                if(!messages) return;
+            dpd.cards.get(function (cards) {
+              $('#cards').empty();
+                if(!cards) return;
                 //
-                // Render out the table of messages.
+                // Render out the table of cards.
                 //
-                messages.reverse();
-                for(var i = 0; i < messages.length; i++) {
-                  if (messages[i].gameId === currentGame.id) {
-                    $('#messages').append('<tr><td><div class="person">' + messages[i].creator + '</div>' + messages[i].text + '</td></tr>');
+                cards.reverse();
+                for(var i = 0; i < cards.length; i++) {
+                  if (cards[i].gameId === currentGame.id) {
+                    $('#cards').append('<tr><td><div class="person">' + cards[i].creator + '</div>' + cards[i].text + '</td></tr>');
                   } else {
                     console.log("Game does not match");
                   }
@@ -216,28 +218,43 @@
             // When a user clicks send...
             //
             $('button').click(function () {
-              gameDeck = currentGame.deck;
+              if (currentGame.nextToGo === user.id) {
+                gameDeck = currentGame.deck;
+                //
+                // Create a message from the input text.
+                //
+                var playerCard = gameDeck.splice(0,1)[0];
+                var message = playerCard.card + " of " + playerCard.suit;
 
-              //
-              // Create a message from the input text.
-              //
-              var playerCard = gameDeck.splice(0,1)[0];
-              var message = playerCard.card + " of " + playerCard.suit;
+                dpd.games.put({
+                  id: currentGame.id,
+                  deck:gameDeck
+                }, function(result, err) {
+                  if(err) return console.log(err);
+                });
 
-              dpd.games.put({
-                id: currentGame.id,
-                deck:gameDeck
-              }, function(result, err) {
-                if(err) return console.log(err);
-              });
 
-              dpd.messages.post({
-                text: message,
-                card: playerCard,
-                gameId: currentGame.id
-              }, function () {
-                getMessages();
-              });
+                dpd.sharks.get({gameId:getUrlVars()["game"]}, function (sharks) {
+                  for (var i = 0; i < sharks.length; i++) {
+                    shark = sharks[i];
+                    if (shark.playerId === currentGame.nextToGo) {
+                      nextToGo = sharks[i + 1].playerId;
+                    }
+                  }
+                  dpd.cards.post({
+                    text: message,
+                    card: playerCard,
+                    gameId: currentGame.id
+                  }, function () {
+                    dpd.games.put(currentGame.id, {"nextToGo":nextToGo}, function () {
+                      getCards();
+                    });
+                  });
+                });
+              } else {
+                alert("it is not your go yet, moron.");
+                getCards();
+              }
             });
 
             //

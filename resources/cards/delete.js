@@ -1,0 +1,1 @@
+emit('messages changed', this);
