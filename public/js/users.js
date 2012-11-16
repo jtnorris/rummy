@@ -1,8 +1,18 @@
+Array.prototype.contains = function ( needle ) {
+   for (i in this) {
+       if (this[i] == needle) return true;
+   }
+   return false;
+}
+
 var user,
     params,
     userGames,
     gameTemplate = '<li>' +
       '<a href="/?game={{gameId}}">Game:{{gameId}}</a>' +
+      '</li>',
+   gameTemplateNoLink = '<li>' +
+      'Game:{{gameId}}' +
       '</li>';
 
 
@@ -14,7 +24,30 @@ dpd.users.me(function (me) {
     params = getUrlVars();
 
     if (params.game !== undefined) {
-      $('#page').html('<h1>Game: ' + params.game + '</h1>');
+      $('#page').load('game.html', function () {
+        $('h1').append(params.game);
+
+        var query = {"gameId": params.game, "playerId": user.id};
+
+        dpd.sharks.get(query, function (result) {
+         if (result.length !== 0) {
+            $('#leave-game').removeClass('hide').click(function () {
+              dpd.sharks.del(result[0].id, function (err) {
+                window.location = window.location;
+              });
+            });
+            $('#join-game').addClass('hide');
+          } else {
+            $('#join-game').removeClass('hide');
+            $('#join-game').click(function () {
+              dpd.sharks.post(query, function(result, err) {
+                window.location = window.location;
+              });
+            });
+         }
+        });
+        
+      });
     } else {
       $('#page').load('games.html');
       var query = {"playerId": user.id};
@@ -24,11 +57,32 @@ dpd.users.me(function (me) {
         getUserGamesQuery.push(result[i].gameId);
        }
 
+       var yourGameIds = [];
+
        dpd.games.get({"id": {"$in": getUserGamesQuery}}, function (userGames) {
         for (var i = 0; i < userGames.length; i++) {
-          $('#games').append(gameTemplate.replace(/\{{gameId}}/g, userGames[i].id));
+          yourGameIds.push(userGames[i].id);
+          $('#your-games').append(gameTemplate.replace(/\{{gameId}}/g, userGames[i].id));
         }
+        dpd.games.get({}, function (allGames) {
+          for (var i = 0; i < allGames.length; i++) {
+            if (yourGameIds.contains(allGames[i].id)) {
+              $('#all-games').append(gameTemplateNoLink.replace(/\{{gameId}}/g, allGames[i].id));
+            } else {
+              $('#all-games').append(gameTemplate.replace(/\{{gameId}}/g, allGames[i].id));
+            }
+          }
+          $('#all-games').append('<button class="btn btn-primary" id="add-game">Add new game</button>');
+          $('#add-game').click(function () {
+            dpd.games.post({"nextToGo": user.id}, function(result, err) {
+              dpd.sharks.post({"gameId": result.id,"playerId": user.id}, function(result, err) {
+                window.location = window.location;
+              });
+            });
+          });
+         });
        });
+       
       });
     }
   } else {
@@ -52,7 +106,7 @@ dpd.users.me(function (me) {
               window.location = '/';
             })
           }
-        })
+        });
       });
 
       //
