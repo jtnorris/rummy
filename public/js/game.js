@@ -1,3 +1,59 @@
+var r = {};
+ r.cards = [],
+ r.cardScores = {
+   "ace": 11,
+   "king": 10,
+   "queen": 10,
+   "jack": 10,
+   "ten": 10,
+   "nine": 9,
+   "eight": 8,
+   "seven": 7,
+   "six": 6,
+   "five": 5,
+   "four": 4,
+   "three": 3,
+   "two": 2,
+ },
+ r.suits = ['hearts', 'diamonds', 'clubs', 'spades'];
+r.generateCards = function () {
+ for (var i = 0; i < r.suits.length; i++) {
+   for (var card in r.cardScores) {
+      var rank = r.cardScores[card];
+      switch (card) {
+        case "ace": rank = "a"; break;
+        case "king": rank = "k"; break;
+        case "queen": rank = "q"; break;
+        case "jack": rank = "j"; break;
+      }
+     r.cards.push({
+       "suit": r.suits[i],
+       "card": card,
+       "score": r.cardScores[card],
+       "symbol": '&' + (r.suits[i] === 'diamonds' ? 'diams' : r.suits[i]) + ';',
+       "rank": rank
+     });
+   }
+ }
+ r.shuffleCards();
+}
+r.shuffleCards = function() {
+ var i = r.cards.length,
+   j,
+   temp;
+   if ( i == 0 ) return;
+   while ( --i ) {
+       j = Math.floor( Math.random() * ( i + 1 ) );
+       temp = r.cards[i];
+       r.cards[i] = r.cards[j];
+       r.cards[j] = temp;
+   }
+}
+r.newDeck = function () {
+  r.generateCards();
+  return r.cards;
+};
+
 // var r = {};
 //     r.cards = [],
 //     r.cardScores = {

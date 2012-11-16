@@ -16,6 +16,14 @@
 			"required": true,
 			"id": "playerId",
 			"order": 1
+		},
+		"hand": {
+			"name": "hand",
+			"type": "array",
+			"typeLabel": "array",
+			"required": false,
+			"id": "hand",
+			"order": 2
 		}
 	}
 }

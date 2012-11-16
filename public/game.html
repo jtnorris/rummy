@@ -1,4 +1,77 @@
 <h1>Game: </h1>
 
-<button class="btn btn-primary hide" id="join-game">Join this mother effing game</button>
-<button class="btn btn-danger hide" id="leave-game">Leave this sad excuse for a game</button>
+<div class="row">
+
+	<div class="span5">
+
+		<h2>The Deck</h2>
+		<section id="deck" class="cards"></section>
+
+		<button id="start-game" class="btn btn-primary hide">Start this game, you slag</button>
+
+	</div>
+
+	<div class="span6">
+
+		<h2>Your cards</h2>
+		<section id="hand" class="cards"></section>
+
+	</div>
+
+	<div class="span2 pull-right">
+
+		<button class="btn btn-primary hide" id="join-game">Join this mother effing game</button>
+		<button class="btn btn-danger hide" id="leave-game">Leave this sad excuse for a game</button>
+
+	</div>
+
+</div>
+
+<style type="text/css">
+/*	#hand {
+		width:250px; height:350px;
+		margin: 0 auto 30px;
+		position: relative;
+		padding: 0;
+		list-style-type: none;
+	}
+
+	#hand article {
+		width: 100%;
+		height: 100%;
+		margin: 0;
+		position: absolute;
+		top: 0;
+		left: 0;
+		cursor: pointer;
+		background: #fff;
+		pointer-events: auto;
+		-webkit-backface-visibility: hidden;
+		-moz-backface-visibility: hidden;
+		-ms-backface-visibility: hidden;
+		-o-backface-visibility: hidden;
+		backface-visibility: hidden;
+	}*/
+
+	* {padding:0; margin:0; list-style-type:none;}
+	.cards {position:relative; z-index:0; margin-top:100px; width:250px; height:350px;}
+	.cards article {position:absolute; top:0; left:0; width:250px; height:350px; margin:0 20px 20px 0; border-top:solid 1px #FFF; border-radius:10px; box-shadow:0 0 1px rgba(0,0,0,0.5), 1px 1px 2px rgba(0,0,0,0.2); background:#FEFEFE; overflow:hidden;}
+	.cards h1 {position:absolute; top:150px; left:70px; width:160px; font-size:250px; text-align:right; letter-spacing:-50px;}
+	.cards .header, .footer {display:block; position:absolute; width:210px; padding:20px; height:50px; font-size:18px;}
+	.cards .header {top:0;}
+	.cards .footer {bottom:0; -webkit-transform:rotate(180deg); border-radius:10px 10px 0 0; color:#FFF; background:#333;}
+	.cards .footer h2 {color:#FFF;}
+	.cards h2 {position:absolute; top:24px; right:20px; font-size:12px;}
+	.cards .symbols {position:absolute; top:90px; left:20px; width:80px; font-size:40px;}
+	.cards .symbols li {float:left; width:30px; margin-top:-15px; line-height:50px;}
+
+	.cards .diamonds,
+	.cards .hearts,
+	.cards .diamonds h1,
+	.cards .hearts h1 {color:#b11;}
+	.cards .diamonds .footer,
+	.cards .hearts .footer {background:#b11;}
+
+	#deck article {background:#CCC;}
+
+</style>
