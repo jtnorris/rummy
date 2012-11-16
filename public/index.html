@@ -2,13 +2,14 @@
 <html>
 <head>
   <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-  <title>users</title>
+  <title>GreatRummy::Homepage</title>
   <script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
   <link href='http://fonts.googleapis.com/css?family=Bitter:400,700,400italic' rel='stylesheet' type='text/css'>
   <script src="/dpd.js"></script>
   <link rel="stylesheet" href="http://deployd.com/css/app.css" type="text/css">
   <style>
-    .well {margin-top: 40px;}
+    body {padding:100px 0 0;}
+    .navbar .brand { font-size:30px; }
     .row * {text-align: center !important;}
     form {margin-bottom: 10px;}
     .person {
@@ -39,25 +40,39 @@
 </head>
 
 <body>
-  <div class="container">
-    <div class="row">
-      <div class="span4 offset4">
-        <div class="well">
-          <div class="nav">
-            <a class="btn" href="/profile.html"><i class="icon-user"></i> Profile</a>
-            <a id="logout" class="btn" href="#"><i class="icon-off"></i> Logout</a>
+  <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand" href="./index.html">GreatRummy</a>
+          <div class="nav-collapse collapse pull-right">
+            <ul class="nav nav-pills">
+              <li class="active">
+                <a href="./index.html" ><i class="icon-home"></i> Home</a>
+              </li>
+              <li class="">
+                <a href="/profile.html"><i class="icon-user"></i> Profile</a>
+              </li>
+              <li class="">
+                <a id="logout" href="#"><i class="icon-off"></i> Logout</a>
+              </li>
+            </ul>
           </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="row-fluid">
+      <div id="page">
           <h1>...</h1>
-          <!--
-            A simple table to display cards.
-          -->
-          <table id="cards" class="table table-bordered table-striped"></table>
+          <!-- A simple table to display cards. -->
+          <!-- <table id="cards" class="table table-bordered table-striped"></table>
 
           <form class="form-horizontal">
             <div class="input-append">
-              <!--
+
                 A simple input for creating a new message.
-              -->
+
               <button class="btn" type="button">Take Card</button>
             </div>
           </form>
@@ -67,221 +82,12 @@
           </div>
 
           <ul id="cards">
-
-          </ul>
-
-          <script>
-        var r = {};
-
-            r.cards = [],
-            r.cardScores = {
-              "ace": 11,
-              "king": 10,
-              "queen": 10,
-              "jack": 10,
-              "ten": 10,
-              "nine": 9,
-              "eight": 8,
-              "seven": 7,
-              "six": 6,
-              "five": 5,
-              "four": 4,
-              "three": 3,
-              "two": 2,
-            },
-            r.suits = ['hearts', 'diamonds', 'clubs', 'spades'];
-
-          r.generateCards = function () {
-            for (var i = 0; i < r.suits.length; i++) {
-              for (var card in r.cardScores) {
-                r.cards.push({
-                  "suit": r.suits[i],
-                  "card": card,
-                  "score": r.cardScores[card]
-                });
-              }
-            }
-          }
-
-          r.shuffleCards = function() {
-            var i = r.cards.length,
-              j,
-              temp;
-
-              if ( i == 0 ) return;
-              while ( --i ) {
-                  j = Math.floor( Math.random() * ( i + 1 ) );
-                  temp = r.cards[i];
-                  r.cards[i] = r.cards[j];
-                  r.cards[j] = temp;
-              }
-          }
-
-        function getUrlVars() {
-            var vars = {};
-            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-                vars[key] = value;
-            });
-            return vars;
-        }
-
-
-
-          //
-          // Show new cards as they are created.
-          //
-          var user,
-            currentGame,
-            gameDeck,
-            players,
-            nextToGo;
-
-          dpd.on('cards changed', function () {
-            getCards();
-          });
-
-          //
-          // Show users as they login.
-          //
-          dpd.on('visit', function (user) {
-            $('#notifier').html(user + ' just logged in').addClass('shown');
-            setTimeout(function () {
-              $('#notifier').removeClass('shown');
-            }, 2500);
-          });
-
-          function getGame() {
-            dpd.games.get({id:getUrlVars()["game"]}, function (game) {
-              currentGame = game;
-              gameDeck = currentGame.deck;
-            });
-          }
-
-          //
-          // Get the current user.
-          //
-          dpd.users.me(function (me) {
-            dpd.games.get({id:getUrlVars()["game"]}, function (game) {
-              currentGame = game;
-
-              r.generateCards();
-              r.shuffleCards();
-              gameDeck = r.cards;
-
-              if (typeof currentGame.deck === 'undefined') {
-                dpd.games.put({
-                  id: currentGame.id,
-                  deck: gameDeck
-                }, function(result, err) {
-                  if(err) return console.log(err);
-                });
-              }
-            });
-
-            //
-            // If the user is logged in, display the name.
-            //
-            $('h1').text('Hello, ' + me.name);
-            user = me;
-            //
-            // Only get cards if the user is logged in.
-            //
-            getCards();
-          });
-
-          //
-          // Here is a simple example of reading and saving data with a deployd collection.
-          //
-          function getCards() {
-            getGame();
-            //
-            // Get cards from the `/cards` collection using jQuery.
-            //
-            dpd.cards.get(function (cards) {
-              $('#cards').empty();
-                if(!cards) return;
-                //
-                // Render out the table of cards.
-                //
-                cards.reverse();
-                for(var i = 0; i < cards.length; i++) {
-                  if (cards[i].gameId === currentGame.id) {
-                    $('#cards').append('<tr><td><div class="person">' + cards[i].creator + '</div>' + cards[i].text + '</td></tr>');
-                  } else {
-                    console.log("Game does not match");
-                  }
-                }
-              });
-            }
-
-            //
-            // When a user clicks send...
-            //
-            $('button').click(function () {
-              if (currentGame.nextToGo === user.id) {
-                gameDeck = currentGame.deck;
-                //
-                // Create a message from the input text.
-                //
-                var playerCard = gameDeck.splice(0,1)[0];
-                var message = playerCard.card + " of " + playerCard.suit;
-
-                dpd.games.put({
-                  id: currentGame.id,
-                  deck:gameDeck
-                }, function(result, err) {
-                  if(err) return console.log(err);
-                });
-
-
-                dpd.sharks.get({gameId:getUrlVars()["game"]}, function (sharks) {
-                  for (var i = 0; i < sharks.length; i++) {
-                    shark = sharks[i];
-                    if (shark.playerId === currentGame.nextToGo) {
-                      nextToGo = sharks[i + 1].playerId;
-                    }
-                  }
-                  dpd.cards.post({
-                    text: message,
-                    card: playerCard,
-                    gameId: currentGame.id
-                  }, function () {
-                    dpd.games.put(currentGame.id, {"nextToGo":nextToGo}, function () {
-                      getCards();
-                    });
-                  });
-                });
-              } else {
-                alert("it is not your go yet, moron.");
-                getCards();
-              }
-            });
-
-            //
-            // Also, send when the user presses enter.
-            //
-            $('form').keypress(function(e) {
-              if(e.keyCode === 13) {
-                  e.preventDefault();
-                  $('button').click();
-                  return false;
-              }
-            });
-
-            //
-            // Logout the user when they click on the logout button.
-            //
-            $('#logout').click(function() {
-              dpd.users.logout(function () {
-                window.location = '/login.html';
-              })
-            });
-          </script>
-        </div>
+          </ul> -->
 
       </div>
     </div>
   </div>
+<script src="/js/users.js"></script>
+<script src="/js/game.js"></script>
 </body>
-
 </html>
