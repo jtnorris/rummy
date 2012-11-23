@@ -18,15 +18,17 @@ var user,
       var templated = '<article class="card {{suit}}">' +
         '<h1>{{rank}}</h1>' +
         '<ul class="symbols">';
-          for (var i=0; i<score; i++) {
-            templated += '<li>{{symbol}}</li>'
+          if (score <= 10) {
+            for (var i=0; i<score; i++) {
+              templated += '<li>{{symbol}}</li>'
+            }
           }
         templated += '</ul>' +
         '<span class="header">' +
-          score + ' {{symbol}} <h2>{{card}} <em>of</em> {{suit}}</h2>' +
+          '{{rank}} {{symbol}} <h2>{{rank}} <em>of</em> {{suit}}</h2>' +
         '</span>' +
         '<span class="footer">' +
-          score + ' {{symbol}} <h2>{{card}} <em>of</em> {{suit}}</h2>' +
+          '{{rank}} {{symbol}} <h2>{{rank}} <em>of</em> {{suit}}</h2>' +
         '</span>' +
       '</article>';
       return templated;
@@ -45,7 +47,7 @@ dpd.users.me(function (me) {
 
         dpd.games.get({"id": params.game}, function (game, err) {
           if(err) return console.warn(err.message);
-          
+
           var query = {"gameId": params.game, "playerId": user.id};
 
           if (typeof game.deck === 'undefined') {
@@ -60,7 +62,7 @@ dpd.users.me(function (me) {
                         window.location = window.location;
                       });
                     });
-                    
+
                   });
                  });
               }
@@ -105,7 +107,7 @@ dpd.users.me(function (me) {
           });
 
         });
-        
+
       });
     } else {
       $('#page').load('games.html');
@@ -141,7 +143,7 @@ dpd.users.me(function (me) {
           });
          });
        });
-       
+
       });
     }
   } else {
