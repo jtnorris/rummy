@@ -148,3 +148,8 @@ stackTemplate = function (score) {
   '</article>';
   return templated;
 };
+
+
+dpd.games.on('update', function(message) {
+  $.rummy.getGame();
+});
