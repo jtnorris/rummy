@@ -94,7 +94,7 @@ jQuery.fn.reverse = [].reverse;
 				// will vary between minX and maxX 
 				origin : { x : 5, y : 100 },
 				// additional translation of each item
-				translation : 200,
+				translation : 600,
 				// if the cards should be centered after the transform 
 				// is applied
 				center : true,
@@ -184,16 +184,6 @@ jQuery.fn.reverse = [].reverse;
 				} );
 
 			}
-
-			this.$el.on( 'click.baraja', 'article', function() {
-
-				if( !self.isAnimating ) {
-
-					self._move2front( $( this ) );
-
-				}
-
-			} );
 
 		},
 		_resetTransition : function( $el ) {

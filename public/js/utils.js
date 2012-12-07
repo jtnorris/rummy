@@ -15,6 +15,7 @@ function getUrlVars() {
     o.off.apply(o, arguments);
   };
   $.pub = function() {
+    console.info('Pub:             ' + arguments[0]);
     o.trigger.apply(o, arguments);
   };
 }(jQuery));

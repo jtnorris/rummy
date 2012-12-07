@@ -16,6 +16,14 @@
 			"required": true,
 			"id": "nextToGo",
 			"order": 1
+		},
+		"stack": {
+			"name": "stack",
+			"type": "array",
+			"typeLabel": "array",
+			"required": false,
+			"id": "stack",
+			"order": 2
 		}
 	}
 }
